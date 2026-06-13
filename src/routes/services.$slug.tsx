@@ -38,7 +38,7 @@ export const Route = createFileRoute("/services/$slug")({
 });
 
 function ServiceDetail() {
-  const { service } = Route.useLoaderData();
+  const { service } = Route.useLoaderData() as { service: (typeof services)[number] };
   const navigate = useNavigate();
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const { bg, text } = categoryColors[service.category];
