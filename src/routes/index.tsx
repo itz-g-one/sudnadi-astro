@@ -219,6 +219,46 @@ function Home() {
         </div>
       </section>
 
+      {/* HOW IT WORKS */}
+      <section className="py-20 md:py-24 bg-cream">
+        <div className="mx-auto max-w-6xl px-5 md:px-6">
+          <div className="text-center max-w-2xl mx-auto mb-14" data-animate>
+            <SectionEyebrow>How it works</SectionEyebrow>
+            <h2 className="font-display text-[34px] md:text-[44px] leading-tight text-indigo-deep font-semibold">
+              Three small steps. One honest report.
+            </h2>
+          </div>
+          <ol className="grid md:grid-cols-3 gap-6 md:gap-8">
+            {steps.map((s, i) => (
+              <li
+                key={s.title}
+                data-animate
+                data-animate-delay={(i + 1) as 1 | 2 | 3}
+                className="relative bg-white border border-border-light rounded-lg p-7"
+              >
+                <span className="absolute -top-4 left-7 font-display text-[40px] leading-none text-saffron/25 font-semibold">
+                  0{i + 1}
+                </span>
+                <span className="inline-flex w-12 h-12 rounded-full bg-indigo-deep text-cream items-center justify-center">
+                  <s.icon size={20} aria-hidden />
+                </span>
+                <h3 className="mt-5 font-display text-[22px] text-indigo-deep">{s.title}</h3>
+                <p className="mt-2 text-[14.5px] text-text-body leading-relaxed">{s.text}</p>
+              </li>
+            ))}
+          </ol>
+          <div className="mt-12 text-center">
+            <Link
+              to="/services"
+              className="inline-flex items-center gap-2 bg-saffron text-white px-7 py-3.5 rounded-full font-semibold hover:bg-saffron-hover transition-colors"
+            >
+              Start your reading <ArrowRight size={16} aria-hidden />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+
       {/* STATS */}
       <section className="relative bg-indigo-deep py-20 md:py-24 overflow-hidden">
         <ConstellationBg color="#F4854A" className="opacity-30" />
