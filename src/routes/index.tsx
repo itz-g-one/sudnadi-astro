@@ -170,6 +170,51 @@ function Home() {
             </p>
           </div>
 
+      {/* HOW WE HELP — value proposition */}
+      <section className="py-20 md:py-24 bg-cream">
+        <div className="mx-auto max-w-7xl px-5 md:px-6">
+          <div className="max-w-2xl mb-12" data-animate>
+            <SectionEyebrow>How Astrosuman helps you</SectionEyebrow>
+            <h2 className="font-display text-[34px] md:text-[46px] leading-tight text-indigo-deep font-semibold">
+              Real answers to the questions actually keeping you up.
+            </h2>
+            <p className="mt-4 text-text-body text-[16.5px] leading-relaxed">
+              Not horoscopes. Not predictions copied from a book. A personal reading of your chart — applied to the decision in front of you.
+            </p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {helpItems.map((h, i) => (
+              <div
+                key={h.title}
+                data-animate
+                data-animate-delay={((i % 4) + 1) as 1 | 2 | 3 | 4}
+                className="bg-white border border-border-light rounded-lg p-6 hover:border-saffron-border hover:shadow-warm transition-all"
+              >
+                <span className="inline-flex w-11 h-11 rounded-full bg-saffron-ghost text-saffron items-center justify-center">
+                  <h.icon size={20} aria-hidden />
+                </span>
+                <h3 className="mt-4 font-display text-[20px] text-indigo-deep leading-snug">{h.title}</h3>
+                <p className="mt-2 text-[14.5px] text-text-body leading-relaxed">{h.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* SERVICES */}
+      <section className="bg-cream-warm/40 py-20 md:py-28">
+        <div className="mx-auto max-w-7xl px-5 md:px-6">
+          <div className="text-center max-w-2xl mx-auto" data-animate>
+            <SectionEyebrow>The Readings</SectionEyebrow>
+            <h2 className="font-display text-[36px] md:text-[48px] leading-tight text-indigo-deep font-semibold">
+              Pick the reading that matches your question
+            </h2>
+            <OrnamentDivider />
+            <p className="text-text-body">
+              Nine focused services. Each one written by hand for your chart — never a templated PDF.
+            </p>
+          </div>
+
           <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {services.slice(0, 6).map((s, i) => (
               <ServiceCard key={s.id} service={s} delay={(i % 3) + 1} />
