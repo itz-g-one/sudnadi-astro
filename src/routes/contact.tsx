@@ -66,11 +66,40 @@ function ContactPage() {
           <p className="mt-4 text-cream/75 max-w-xl mx-auto">
             Quickest reply on WhatsApp. Detailed questions are welcome by email or through the form below.
           </p>
+          <p className="mt-3 inline-flex items-center gap-2 text-[12.5px] font-mono uppercase tracking-widest text-saffron-light">
+            <Clock size={12} aria-hidden /> Typical reply in a few hours
+          </p>
+        </div>
+      </section>
+
+      {/* QUICK REPLIES */}
+      <section className="-mt-8 relative z-10">
+        <div className="mx-auto max-w-5xl px-5 md:px-6">
+          <div className="bg-white border border-border-light rounded-lg p-5 md:p-6 shadow-warm">
+            <p className="text-[12px] font-mono uppercase tracking-widest text-text-muted mb-3">
+              Start a WhatsApp chat — pick a question
+            </p>
+            <div className="grid sm:grid-cols-3 gap-3">
+              {quickReplies.map((q) => (
+                <a
+                  key={q.label}
+                  href={`https://wa.me/919717691644?text=${encodeURIComponent(q.msg)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-start gap-2.5 text-left text-[14px] text-indigo-deep bg-cream hover:bg-saffron-ghost border border-border-warm hover:border-saffron-border rounded-md px-4 py-3 transition-colors"
+                >
+                  <MessageCircle size={16} className="text-[#25D366] mt-0.5 shrink-0" aria-hidden />
+                  <span className="leading-snug">{q.label}</span>
+                </a>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
       <section className="py-16">
         <div className="mx-auto max-w-6xl px-5 md:px-6 grid lg:grid-cols-[1.4fr_1fr] gap-10">
+
           {/* FORM */}
           <div className="bg-white border-t-4 border-saffron border-x border-b border-border-light rounded-lg p-7 md:p-10 shadow-warm">
             {sent ? (
