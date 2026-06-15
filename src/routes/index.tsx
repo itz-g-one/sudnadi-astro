@@ -156,22 +156,9 @@ function Home() {
         </div>
       </section>
 
-      {/* SERVICES */}
-      <section className="bg-cream-warm/40 py-20 md:py-28">
-        <div className="mx-auto max-w-7xl px-5 md:px-6">
-          <div className="text-center max-w-2xl mx-auto" data-animate>
-            <SectionEyebrow>The Readings</SectionEyebrow>
-            <h2 className="font-display text-[36px] md:text-[48px] leading-tight text-indigo-deep font-semibold">
-              Pick the reading that matches your question
-            </h2>
-            <OrnamentDivider />
-            <p className="text-text-body">
-              Nine focused services. Each one written by hand for your chart — never a templated PDF.
-            </p>
-          </div>
-
       {/* HOW WE HELP — value proposition */}
       <section className="py-20 md:py-24 bg-cream">
+
         <div className="mx-auto max-w-7xl px-5 md:px-6">
           <div className="max-w-2xl mb-12" data-animate>
             <SectionEyebrow>How Astrosuman helps you</SectionEyebrow>
