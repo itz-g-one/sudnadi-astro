@@ -6,9 +6,22 @@ import { SectionEyebrow, OrnamentDivider, ConstellationBg } from "@/components/O
 import { services } from "@/data/services";
 import { blogPosts } from "@/data/blogPosts";
 import { useCountUp } from "@/hooks/useCountUp";
-import { ArrowRight, Star, Sparkles, ShieldCheck, Clock, MessageCircle } from "lucide-react";
+import { ArrowRight, Star, Sparkles, ShieldCheck, Clock, MessageCircle, Compass, HeartHandshake, Briefcase, HelpingHand, PenLine, Mail, CalendarClock } from "lucide-react";
 import heroImg from "@/assets/hero.jpg";
 import astrologerImg from "@/assets/astrologer.jpg";
+
+const helpItems = [
+  { icon: Compass, title: "Find clarity on big decisions", text: "Job switch, marriage, relocation, study abroad — get a grounded astrological perspective before you commit." },
+  { icon: Briefcase, title: "Time your career moves", text: "Know which windows in the next 24 months favour change, growth, or staying put — based on your dasha and transits." },
+  { icon: HeartHandshake, title: "Understand your relationship", text: "Honest Guna milan plus emotional, financial and karmic compatibility — not just a number." },
+  { icon: HelpingHand, title: "Get remedies you can actually do", text: "Simple, sustainable practices tailored to your chart. No expensive prescriptions, no fear-talk." },
+];
+
+const steps = [
+  { icon: PenLine, title: "Pick your reading", text: "Choose from nine focused services — or message on WhatsApp and Sudhansu will suggest one." },
+  { icon: CalendarClock, title: "Share birth details", text: "Date, exact time, and place of birth. Takes under two minutes — kept fully private." },
+  { icon: Mail, title: "Receive your report", text: "A hand-written PDF lands in your inbox in 1–5 days, with one round of WhatsApp follow-up included." },
+];
 
 export const Route = createFileRoute("/")({
   head: () => ({
