@@ -56,25 +56,42 @@ function CheckoutPage() {
     });
   });
 
+  const stepLabels = ["Reading", "You", "Birth details", "Confirm"];
+
   return (
     <div className="min-h-dvh flex flex-col bg-cream">
       <Header />
-      <main id="main" className="flex-1 py-10 md:py-16">
+      <main id="main" className="flex-1 py-10 md:py-16 pb-32 lg:pb-16">
         <div className="mx-auto max-w-6xl px-5 md:px-6">
-          <Link to="/services" className="text-sm text-saffron font-semibold hover:underline">
+          <Link to="/services" className="text-sm text-saffron font-semibold hover:underline inline-flex items-center gap-1">
             ← Continue browsing readings
           </Link>
           <h1 className="mt-3 font-display text-[34px] md:text-[44px] text-indigo-deep font-semibold">
             Complete your booking
           </h1>
           <p className="text-text-body mt-2 max-w-xl">
-            Share your birth details so Sudhansu can prepare your reading. Everything below is kept private.
+            Share your birth details so Sudhansu can prepare your reading personally. Everything below is kept private.
           </p>
 
-          <div className="mt-10 grid lg:grid-cols-[1.5fr_1fr] gap-8">
-            <form onSubmit={onSubmit} className="bg-white border border-border-light rounded-lg p-6 md:p-8 shadow-warm space-y-7" noValidate>
+          {/* Stepper */}
+          <ol className="mt-7 flex flex-wrap items-center gap-x-3 gap-y-2 text-[12.5px] font-medium" aria-label="Booking steps">
+            {stepLabels.map((label, i) => (
+              <li key={label} className="flex items-center gap-2">
+                <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-saffron text-white text-[11px] font-semibold">
+                  {i + 1}
+                </span>
+                <span className="text-indigo-deep">{label}</span>
+                {i < stepLabels.length - 1 && (
+                  <span className="hidden sm:inline-block w-8 h-px bg-border-warm" aria-hidden />
+                )}
+              </li>
+            ))}
+          </ol>
+
+          <div className="mt-8 grid lg:grid-cols-[1.5fr_1fr] gap-8">
+            <form onSubmit={onSubmit} className="bg-white border border-border-light rounded-lg p-6 md:p-8 shadow-warm space-y-8" noValidate>
               <fieldset className="space-y-4">
-                <legend className="font-display text-xl text-indigo-deep">Choose your reading</legend>
+                <legend className="font-display text-xl text-indigo-deep">1. Choose your reading</legend>
                 <div className="grid sm:grid-cols-2 gap-3">
                   {services.map((s) => {
                     const checked = currentSlug === s.slug;
@@ -97,7 +114,7 @@ function CheckoutPage() {
               </fieldset>
 
               <fieldset className="space-y-4">
-                <legend className="font-display text-xl text-indigo-deep">Your details</legend>
+                <legend className="font-display text-xl text-indigo-deep">2. Your details</legend>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <Field label="Full name (as on documents)" error={errors.name?.message}>
                     <input id="name" type="text" autoComplete="name" {...register("name", { required: "Required.", minLength: { value: 2, message: "Too short." } })} className={inputCls(!!errors.name)} />
@@ -112,7 +129,10 @@ function CheckoutPage() {
               </fieldset>
 
               <fieldset className="space-y-4">
-                <legend className="font-display text-xl text-indigo-deep">Birth details</legend>
+                <legend className="font-display text-xl text-indigo-deep">3. Birth details</legend>
+                <p className="text-[13px] text-text-muted -mt-1">
+                  Tip: an exact birth time (from hospital records) gives the most accurate reading.
+                </p>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <Field label="Date of birth" error={errors.dateOfBirth?.message}>
                     <input id="dateOfBirth" type="date" {...register("dateOfBirth", { required: "Required." })} className={inputCls(!!errors.dateOfBirth)} />
@@ -129,16 +149,19 @@ function CheckoutPage() {
                 </Field>
               </fieldset>
 
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full inline-flex items-center justify-center gap-2 bg-saffron text-white h-14 rounded-full font-semibold text-[16px] hover:bg-saffron-hover transition-colors disabled:opacity-60"
-              >
-                {isSubmitting ? "Processing…" : `Pay ₹${current.price} & Book`} <ArrowRight size={18} aria-hidden />
-              </button>
-              <p className="text-xs text-text-muted text-center">
-                <ShieldCheck size={12} className="inline mr-1 text-saffron" aria-hidden /> Secure payment via Razorpay (coming soon — booking confirmed by email for now).
-              </p>
+              <fieldset className="space-y-3">
+                <legend className="font-display text-xl text-indigo-deep">4. Confirm & pay</legend>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full inline-flex items-center justify-center gap-2 bg-saffron text-white h-14 rounded-full font-semibold text-[16px] hover:bg-saffron-hover transition-colors disabled:opacity-60"
+                >
+                  {isSubmitting ? "Processing…" : `Confirm booking · ₹${current.price}`} <ArrowRight size={18} aria-hidden />
+                </button>
+                <p className="text-xs text-text-muted text-center">
+                  <ShieldCheck size={12} className="inline mr-1 text-saffron" aria-hidden /> Secure payment via Razorpay (coming soon — booking confirmed by email for now).
+                </p>
+              </fieldset>
             </form>
 
             {/* Sticky summary */}
@@ -157,14 +180,32 @@ function CheckoutPage() {
                 <span className="font-display text-lg text-indigo-deep">Total</span>
                 <span className="font-display text-2xl text-gold font-semibold">₹{current.price}</span>
               </div>
-              <div className="mt-5 text-xs text-text-muted flex items-start gap-2">
-                <Clock size={14} className="text-saffron mt-0.5 shrink-0" aria-hidden />
-                <span>Report emailed within {current.delivery}.</span>
-              </div>
+              <ul className="mt-6 space-y-2.5 text-[13px] text-text-body">
+                <li className="flex items-start gap-2"><Clock size={14} className="text-saffron mt-0.5 shrink-0" aria-hidden /> Report emailed within {current.delivery}.</li>
+                <li className="flex items-start gap-2"><ShieldCheck size={14} className="text-saffron mt-0.5 shrink-0" aria-hidden /> Birth details kept strictly private.</li>
+                <li className="flex items-start gap-2"><ArrowRight size={14} className="text-saffron mt-0.5 shrink-0" aria-hidden /> One round of WhatsApp follow-up included.</li>
+              </ul>
             </aside>
           </div>
         </div>
       </main>
+
+      {/* Mobile sticky submit bar */}
+      <div className="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-white border-t border-border-light shadow-[0_-4px_20px_rgba(19,19,58,0.06)] px-4 py-3 flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-[11px] uppercase tracking-widest text-text-muted font-mono">Total</p>
+          <p className="font-display text-xl text-gold font-semibold leading-none">₹{current.price}</p>
+        </div>
+        <button
+          type="button"
+          onClick={() => document.querySelector<HTMLFormElement>("form")?.requestSubmit()}
+          disabled={isSubmitting}
+          className="flex-1 max-w-[240px] inline-flex items-center justify-center gap-2 bg-saffron text-white h-12 rounded-full font-semibold text-[15px] hover:bg-saffron-hover transition-colors disabled:opacity-60"
+        >
+          {isSubmitting ? "Processing…" : "Confirm booking"} <ArrowRight size={16} aria-hidden />
+        </button>
+      </div>
+
       <Footer />
     </div>
   );
