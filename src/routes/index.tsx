@@ -6,9 +6,22 @@ import { SectionEyebrow, OrnamentDivider, ConstellationBg } from "@/components/O
 import { services } from "@/data/services";
 import { blogPosts } from "@/data/blogPosts";
 import { useCountUp } from "@/hooks/useCountUp";
-import { ArrowRight, Star, Sparkles, ShieldCheck, Clock, MessageCircle } from "lucide-react";
+import { ArrowRight, Star, Sparkles, ShieldCheck, Clock, MessageCircle, Compass, HeartHandshake, Briefcase, HelpingHand, PenLine, Mail, CalendarClock } from "lucide-react";
 import heroImg from "@/assets/hero.jpg";
 import astrologerImg from "@/assets/astrologer.jpg";
+
+const helpItems = [
+  { icon: Compass, title: "Find clarity on big decisions", text: "Job switch, marriage, relocation, study abroad — get a grounded astrological perspective before you commit." },
+  { icon: Briefcase, title: "Time your career moves", text: "Know which windows in the next 24 months favour change, growth, or staying put — based on your dasha and transits." },
+  { icon: HeartHandshake, title: "Understand your relationship", text: "Honest Guna milan plus emotional, financial and karmic compatibility — not just a number." },
+  { icon: HelpingHand, title: "Get remedies you can actually do", text: "Simple, sustainable practices tailored to your chart. No expensive prescriptions, no fear-talk." },
+];
+
+const steps = [
+  { icon: PenLine, title: "Pick your reading", text: "Choose from nine focused services — or message on WhatsApp and Sudhansu will suggest one." },
+  { icon: CalendarClock, title: "Share birth details", text: "Date, exact time, and place of birth. Takes under two minutes — kept fully private." },
+  { icon: Mail, title: "Receive your report", text: "A hand-written PDF lands in your inbox in 1–5 days, with one round of WhatsApp follow-up included." },
+];
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -143,6 +156,38 @@ function Home() {
         </div>
       </section>
 
+      {/* HOW WE HELP — value proposition */}
+      <section className="py-20 md:py-24 bg-cream">
+
+        <div className="mx-auto max-w-7xl px-5 md:px-6">
+          <div className="max-w-2xl mb-12" data-animate>
+            <SectionEyebrow>How Astrosuman helps you</SectionEyebrow>
+            <h2 className="font-display text-[34px] md:text-[46px] leading-tight text-indigo-deep font-semibold">
+              Real answers to the questions actually keeping you up.
+            </h2>
+            <p className="mt-4 text-text-body text-[16.5px] leading-relaxed">
+              Not horoscopes. Not predictions copied from a book. A personal reading of your chart — applied to the decision in front of you.
+            </p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {helpItems.map((h, i) => (
+              <div
+                key={h.title}
+                data-animate
+                data-animate-delay={((i % 4) + 1) as 1 | 2 | 3 | 4}
+                className="bg-white border border-border-light rounded-lg p-6 hover:border-saffron-border hover:shadow-warm transition-all"
+              >
+                <span className="inline-flex w-11 h-11 rounded-full bg-saffron-ghost text-saffron items-center justify-center">
+                  <h.icon size={20} aria-hidden />
+                </span>
+                <h3 className="mt-4 font-display text-[20px] text-indigo-deep leading-snug">{h.title}</h3>
+                <p className="mt-2 text-[14.5px] text-text-body leading-relaxed">{h.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* SERVICES */}
       <section className="bg-cream-warm/40 py-20 md:py-28">
         <div className="mx-auto max-w-7xl px-5 md:px-6">
@@ -173,6 +218,46 @@ function Home() {
           </div>
         </div>
       </section>
+
+      {/* HOW IT WORKS */}
+      <section className="py-20 md:py-24 bg-cream">
+        <div className="mx-auto max-w-6xl px-5 md:px-6">
+          <div className="text-center max-w-2xl mx-auto mb-14" data-animate>
+            <SectionEyebrow>How it works</SectionEyebrow>
+            <h2 className="font-display text-[34px] md:text-[44px] leading-tight text-indigo-deep font-semibold">
+              Three small steps. One honest report.
+            </h2>
+          </div>
+          <ol className="grid md:grid-cols-3 gap-6 md:gap-8">
+            {steps.map((s, i) => (
+              <li
+                key={s.title}
+                data-animate
+                data-animate-delay={(i + 1) as 1 | 2 | 3}
+                className="relative bg-white border border-border-light rounded-lg p-7"
+              >
+                <span className="absolute -top-4 left-7 font-display text-[40px] leading-none text-saffron/25 font-semibold">
+                  0{i + 1}
+                </span>
+                <span className="inline-flex w-12 h-12 rounded-full bg-indigo-deep text-cream items-center justify-center">
+                  <s.icon size={20} aria-hidden />
+                </span>
+                <h3 className="mt-5 font-display text-[22px] text-indigo-deep">{s.title}</h3>
+                <p className="mt-2 text-[14.5px] text-text-body leading-relaxed">{s.text}</p>
+              </li>
+            ))}
+          </ol>
+          <div className="mt-12 text-center">
+            <Link
+              to="/services"
+              className="inline-flex items-center gap-2 bg-saffron text-white px-7 py-3.5 rounded-full font-semibold hover:bg-saffron-hover transition-colors"
+            >
+              Start your reading <ArrowRight size={16} aria-hidden />
+            </Link>
+          </div>
+        </div>
+      </section>
+
 
       {/* STATS */}
       <section className="relative bg-indigo-deep py-20 md:py-24 overflow-hidden">

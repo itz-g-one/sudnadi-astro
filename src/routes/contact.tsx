@@ -3,7 +3,22 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { SiteShell } from "@/components/SiteShell";
 import { ConstellationBg, SectionEyebrow } from "@/components/Ornaments";
-import { Phone, Mail, MessageCircle, MapPin, Check, Send } from "lucide-react";
+import { Phone, Mail, MessageCircle, MapPin, Check, Send, ChevronDown, Clock } from "lucide-react";
+
+const quickReplies = [
+  { label: "Which reading is right for me?", msg: "Hi Sudhansu ji, I'm not sure which reading fits my situation. Can you help me decide?" },
+  { label: "I have a specific question", msg: "Hi Sudhansu ji, I have one specific question I'd like guidance on." },
+  { label: "Check Kundli compatibility", msg: "Hi Sudhansu ji, I'd like to do Kundli matching for marriage. Could you guide me?" },
+];
+
+const faqs = [
+  { q: "How fast will I hear back?", a: "WhatsApp messages usually get a reply within a few hours during the day. Email and the form below — within 24 hours." },
+  { q: "Do you do live phone consultations?", a: "Most readings are delivered as a detailed written PDF, with one round of WhatsApp follow-up included. Live calls are available on request for an additional fee." },
+  { q: "Can I get a reading if I don't know my exact birth time?", a: "Yes — but accuracy improves significantly with an exact time. Hospital records, birth certificates or your mother's recollection all work. Tell us what you have." },
+  { q: "Is my information kept private?", a: "Always. Birth details, questions and reports are confidential — never shared, sold or used in marketing." },
+];
+
+
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -51,11 +66,40 @@ function ContactPage() {
           <p className="mt-4 text-cream/75 max-w-xl mx-auto">
             Quickest reply on WhatsApp. Detailed questions are welcome by email or through the form below.
           </p>
+          <p className="mt-3 inline-flex items-center gap-2 text-[12.5px] font-mono uppercase tracking-widest text-saffron-light">
+            <Clock size={12} aria-hidden /> Typical reply in a few hours
+          </p>
+        </div>
+      </section>
+
+      {/* QUICK REPLIES */}
+      <section className="-mt-8 relative z-10">
+        <div className="mx-auto max-w-5xl px-5 md:px-6">
+          <div className="bg-white border border-border-light rounded-lg p-5 md:p-6 shadow-warm">
+            <p className="text-[12px] font-mono uppercase tracking-widest text-text-muted mb-3">
+              Start a WhatsApp chat — pick a question
+            </p>
+            <div className="grid sm:grid-cols-3 gap-3">
+              {quickReplies.map((q) => (
+                <a
+                  key={q.label}
+                  href={`https://wa.me/919717691644?text=${encodeURIComponent(q.msg)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-start gap-2.5 text-left text-[14px] text-indigo-deep bg-cream hover:bg-saffron-ghost border border-border-warm hover:border-saffron-border rounded-md px-4 py-3 transition-colors"
+                >
+                  <MessageCircle size={16} className="text-[#25D366] mt-0.5 shrink-0" aria-hidden />
+                  <span className="leading-snug">{q.label}</span>
+                </a>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
       <section className="py-16">
         <div className="mx-auto max-w-6xl px-5 md:px-6 grid lg:grid-cols-[1.4fr_1fr] gap-10">
+
           {/* FORM */}
           <div className="bg-white border-t-4 border-saffron border-x border-b border-border-light rounded-lg p-7 md:p-10 shadow-warm">
             {sent ? (
@@ -164,9 +208,41 @@ function ContactPage() {
           </aside>
         </div>
       </section>
+
+      {/* FAQ */}
+      <section className="pb-20 md:pb-28">
+        <div className="mx-auto max-w-3xl px-5 md:px-6">
+          <SectionEyebrow>Before you ask</SectionEyebrow>
+          <h2 className="font-display text-[30px] md:text-[38px] text-indigo-deep font-semibold">
+            Common questions
+          </h2>
+          <div className="mt-7 space-y-3">
+            {faqs.map((f, i) => <FaqItem key={i} q={f.q} a={f.a} defaultOpen={i === 0} />)}
+          </div>
+        </div>
+      </section>
     </SiteShell>
   );
 }
+
+function FaqItem({ q, a, defaultOpen }: { q: string; a: string; defaultOpen?: boolean }) {
+  const [open, setOpen] = useState(!!defaultOpen);
+  return (
+    <div className="bg-white border border-border-light rounded-md overflow-hidden">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        className="w-full flex items-center justify-between gap-4 text-left p-5 hover:bg-cream"
+      >
+        <span className="font-display text-[17px] text-indigo-deep">{q}</span>
+        <ChevronDown size={18} className={`text-saffron shrink-0 transition-transform ${open ? "rotate-180" : ""}`} aria-hidden />
+      </button>
+      {open && <div className="px-5 pb-5 text-text-body leading-relaxed text-[14.5px]">{a}</div>}
+    </div>
+  );
+}
+
 
 function inputCls(invalid: boolean) {
   return `w-full px-4 py-3 rounded-md bg-cream border ${
