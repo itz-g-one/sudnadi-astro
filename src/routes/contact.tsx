@@ -208,9 +208,41 @@ function ContactPage() {
           </aside>
         </div>
       </section>
+
+      {/* FAQ */}
+      <section className="pb-20 md:pb-28">
+        <div className="mx-auto max-w-3xl px-5 md:px-6">
+          <SectionEyebrow>Before you ask</SectionEyebrow>
+          <h2 className="font-display text-[30px] md:text-[38px] text-indigo-deep font-semibold">
+            Common questions
+          </h2>
+          <div className="mt-7 space-y-3">
+            {faqs.map((f, i) => <FaqItem key={i} q={f.q} a={f.a} defaultOpen={i === 0} />)}
+          </div>
+        </div>
+      </section>
     </SiteShell>
   );
 }
+
+function FaqItem({ q, a, defaultOpen }: { q: string; a: string; defaultOpen?: boolean }) {
+  const [open, setOpen] = useState(!!defaultOpen);
+  return (
+    <div className="bg-white border border-border-light rounded-md overflow-hidden">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        className="w-full flex items-center justify-between gap-4 text-left p-5 hover:bg-cream"
+      >
+        <span className="font-display text-[17px] text-indigo-deep">{q}</span>
+        <ChevronDown size={18} className={`text-saffron shrink-0 transition-transform ${open ? "rotate-180" : ""}`} aria-hidden />
+      </button>
+      {open && <div className="px-5 pb-5 text-text-body leading-relaxed text-[14.5px]">{a}</div>}
+    </div>
+  );
+}
+
 
 function inputCls(invalid: boolean) {
   return `w-full px-4 py-3 rounded-md bg-cream border ${
