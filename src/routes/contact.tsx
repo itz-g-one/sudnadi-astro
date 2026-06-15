@@ -3,7 +3,22 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { SiteShell } from "@/components/SiteShell";
 import { ConstellationBg, SectionEyebrow } from "@/components/Ornaments";
-import { Phone, Mail, MessageCircle, MapPin, Check, Send } from "lucide-react";
+import { Phone, Mail, MessageCircle, MapPin, Check, Send, ChevronDown, Clock } from "lucide-react";
+
+const quickReplies = [
+  { label: "Which reading is right for me?", msg: "Hi Sudhansu ji, I'm not sure which reading fits my situation. Can you help me decide?" },
+  { label: "I have a specific question", msg: "Hi Sudhansu ji, I have one specific question I'd like guidance on." },
+  { label: "Check Kundli compatibility", msg: "Hi Sudhansu ji, I'd like to do Kundli matching for marriage. Could you guide me?" },
+];
+
+const faqs = [
+  { q: "How fast will I hear back?", a: "WhatsApp messages usually get a reply within a few hours during the day. Email and the form below — within 24 hours." },
+  { q: "Do you do live phone consultations?", a: "Most readings are delivered as a detailed written PDF, with one round of WhatsApp follow-up included. Live calls are available on request for an additional fee." },
+  { q: "Can I get a reading if I don't know my exact birth time?", a: "Yes — but accuracy improves significantly with an exact time. Hospital records, birth certificates or your mother's recollection all work. Tell us what you have." },
+  { q: "Is my information kept private?", a: "Always. Birth details, questions and reports are confidential — never shared, sold or used in marketing." },
+];
+
+
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
