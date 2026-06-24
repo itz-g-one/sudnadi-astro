@@ -175,6 +175,14 @@ export type AuditLogInsert = Omit<AuditLogRow, "id" | "created_at">;
 
 // ─── Supabase Database type (for createClient<Database>) ────
 
+type Rel = {
+  foreignKeyName: string;
+  columns: string[];
+  isOneToOne: boolean;
+  referencedRelation: string;
+  referencedColumns: string[];
+};
+
 export interface Database {
   public: {
     Tables: {
@@ -220,7 +228,7 @@ export interface Database {
           created_at?: string;
           updated_at?: string;
         };
-        Relationships: [];
+        Relationships: Rel[];
       };
       bookings: {
         Row: BookingRow;
@@ -260,15 +268,7 @@ export interface Database {
           created_at?: string;
           updated_at?: string;
         };
-        Relationships: [
-          {
-            foreignKeyName: "bookings_service_id_fkey";
-            columns: ["service_id"];
-            isOneToOne: false;
-            referencedRelation: "services";
-            referencedColumns: ["id"];
-          },
-        ];
+        Relationships: Rel[];
       };
       orders: {
         Row: OrderRow;
@@ -300,15 +300,7 @@ export interface Database {
           created_at?: string;
           updated_at?: string;
         };
-        Relationships: [
-          {
-            foreignKeyName: "orders_booking_id_fkey";
-            columns: ["booking_id"];
-            isOneToOne: false;
-            referencedRelation: "bookings";
-            referencedColumns: ["id"];
-          },
-        ];
+        Relationships: Rel[];
       };
       payments: {
         Row: PaymentRow;
@@ -328,15 +320,7 @@ export interface Database {
           raw_payload?: Record<string, unknown> | null;
           created_at?: string;
         };
-        Relationships: [
-          {
-            foreignKeyName: "payments_order_id_fkey";
-            columns: ["order_id"];
-            isOneToOne: false;
-            referencedRelation: "orders";
-            referencedColumns: ["id"];
-          },
-        ];
+        Relationships: Rel[];
       };
       contact_messages: {
         Row: ContactMessageRow;
@@ -362,7 +346,7 @@ export interface Database {
           created_at?: string;
           updated_at?: string;
         };
-        Relationships: [];
+        Relationships: Rel[];
       };
       blog_posts: {
         Row: BlogPostRow;
@@ -398,7 +382,7 @@ export interface Database {
           created_at?: string;
           updated_at?: string;
         };
-        Relationships: [];
+        Relationships: Rel[];
       };
       testimonials: {
         Row: TestimonialRow;
@@ -424,7 +408,7 @@ export interface Database {
           created_at?: string;
           updated_at?: string;
         };
-        Relationships: [];
+        Relationships: Rel[];
       };
       site_settings: {
         Row: SiteSettingRow;
@@ -442,7 +426,7 @@ export interface Database {
           created_at?: string;
           updated_at?: string;
         };
-        Relationships: [];
+        Relationships: Rel[];
       };
       admin_profiles: {
         Row: AdminProfileRow;
@@ -462,7 +446,7 @@ export interface Database {
           created_at?: string;
           updated_at?: string;
         };
-        Relationships: [];
+        Relationships: Rel[];
       };
       audit_logs: {
         Row: AuditLogRow;
@@ -484,7 +468,7 @@ export interface Database {
           details?: Record<string, unknown> | null;
           created_at?: string;
         };
-        Relationships: [];
+        Relationships: Rel[];
       };
     };
     Views: Record<string, never>;

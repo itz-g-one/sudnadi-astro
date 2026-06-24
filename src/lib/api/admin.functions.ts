@@ -1,4 +1,4 @@
-const createServerFn = ({method}) => ({ inputValidator: () => ({ handler: (fn) => fn }) });
+import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { getSupabaseAdmin } from "../supabase.server";
 
@@ -39,7 +39,7 @@ async function requireAdmin(authHeader?: string) {
 // ─── Admin Dashboard Stats ─────────────────────────────────
 
 export const getAdminStats = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ authToken: z.string() }))
+  .validator(z.object({ authToken: z.string() }))
   .handler(async ({ data }) => {
     await requireAdmin(`Bearer ${data.authToken}`);
     const db = getSupabaseAdmin();
@@ -125,7 +125,7 @@ export const getAdminStats = createServerFn({ method: "POST" })
 // ─── Update Site Settings ───────────────────────────────────
 
 export const updateSiteSettings = createServerFn({ method: "POST" })
-  .inputValidator(
+  .validator(
     z.object({
       authToken: z.string(),
       settings: z.array(z.object({ key: z.string(), value: z.unknown() })),
@@ -157,7 +157,7 @@ export const updateSiteSettings = createServerFn({ method: "POST" })
 // ─── Update Booking Status ──────────────────────────────────
 
 export const updateBookingStatus = createServerFn({ method: "POST" })
-  .inputValidator(
+  .validator(
     z.object({
       authToken: z.string(),
       bookingId: z.string().uuid(),
@@ -195,7 +195,7 @@ export const updateBookingStatus = createServerFn({ method: "POST" })
 // ─── Update Contact Message Status ──────────────────────────
 
 export const updateContactStatus = createServerFn({ method: "POST" })
-  .inputValidator(
+  .validator(
     z.object({
       authToken: z.string(),
       messageId: z.string().uuid(),

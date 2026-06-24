@@ -1,4 +1,4 @@
-const createServerFn = ({method}) => ({ inputValidator: () => ({ handler: (fn) => fn }) });
+import { createServerFn } from "@tanstack/react-start";
 import { getSupabaseAdmin } from "../supabase.server";
 import { bookingFormSchema } from "../validations";
 
@@ -26,7 +26,7 @@ function generatePublicRef(): string {
  * 6. Returns booking + order data for payment initiation
  */
 export const createBooking = createServerFn({ method: "POST" })
-  .inputValidator(bookingFormSchema)
+  .validator(bookingFormSchema)
   .handler(async ({ data }) => {
     const db = getSupabaseAdmin();
 

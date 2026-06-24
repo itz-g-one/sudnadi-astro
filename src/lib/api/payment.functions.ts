@@ -1,4 +1,4 @@
-const createServerFn = ({method}) => ({ inputValidator: () => ({ handler: (fn) => fn }) });
+import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { getSupabaseAdmin } from "../supabase.server";
 import { getServerConfig } from "../config.server";
@@ -19,7 +19,7 @@ import { payuCallbackSchema } from "../validations";
 // ─── Create PayU Order ──────────────────────────────────────
 
 export const createPayUOrder = createServerFn({ method: "POST" })
-  .inputValidator(
+  .validator(
     z.object({
       bookingId: z.string().uuid(),
       orderId: z.string().uuid(),
@@ -131,7 +131,7 @@ export const createPayUOrder = createServerFn({ method: "POST" })
 // ─── Verify PayU Payment (Callback) ────────────────────────
 
 export const verifyPayUPayment = createServerFn({ method: "POST" })
-  .inputValidator(payuCallbackSchema)
+  .validator(payuCallbackSchema)
   .handler(async ({ data: callbackData }) => {
     const db = getSupabaseAdmin();
     const config = getServerConfig();
@@ -321,7 +321,7 @@ export const verifyPayUPayment = createServerFn({ method: "POST" })
 // ─── Fetch Booking by Public Ref ────────────────────────────
 
 export const getBookingByRef = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ publicRef: z.string().min(1) }))
+  .validator(z.object({ publicRef: z.string().min(1) }))
   .handler(async ({ data }) => {
     const db = getSupabaseAdmin();
 

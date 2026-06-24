@@ -1,4 +1,4 @@
-const createServerFn = ({method}) => ({ inputValidator: () => ({ handler: (fn) => fn }) });
+import { createServerFn } from "@tanstack/react-start";
 import { getSupabaseAdmin } from "../supabase.server";
 import { sendEmail } from "../email/send-email.server";
 import { contactAdminNotification, contactAutoReply } from "../email/templates";
@@ -15,7 +15,7 @@ import { getServerConfig } from "../config.server";
  * 5. Logs to audit_logs
  */
 export const submitContactMessage = createServerFn({ method: "POST" })
-  .inputValidator(contactFormSchema)
+  .validator(contactFormSchema)
   .handler(async ({ data }) => {
     const db = getSupabaseAdmin();
     const config = getServerConfig();

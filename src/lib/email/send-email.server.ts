@@ -1,4 +1,4 @@
-import process from "node:process";
+
 
 interface SendEmailOptions {
   to: string | string[];
