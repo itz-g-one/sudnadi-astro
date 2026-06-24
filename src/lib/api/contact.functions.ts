@@ -1,9 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getSupabaseAdmin } from "../supabase.server";
-import { sendEmail } from "../email/send-email.server";
 import { contactAdminNotification, contactAutoReply } from "../email/templates";
 import { contactFormSchema } from "../validations";
-import { getServerConfig } from "../config.server";
 
 /**
  * Submit a contact message.
@@ -17,6 +14,9 @@ import { getServerConfig } from "../config.server";
 export const submitContactMessage = createServerFn({ method: "POST" })
   .validator(contactFormSchema)
   .handler(async ({ data }) => {
+    const { getSupabaseAdmin } = await import("../supabase.server");
+    const { sendEmail } = await import("../email/send-email.server");
+    const { getServerConfig } = await import("../config.server");
     const db = getSupabaseAdmin();
     const config = getServerConfig();
 

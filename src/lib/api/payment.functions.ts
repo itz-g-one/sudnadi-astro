@@ -1,20 +1,24 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { getSupabaseAdmin } from "../supabase.server";
-import { getServerConfig } from "../config.server";
-import { sendEmail } from "../email/send-email.server";
 import {
   bookingConfirmation,
   bookingAdminAlert,
   paymentFailureNotice,
 } from "../email/templates";
-import {
-  generatePayUHash,
-  verifyPayUReverseHash,
-  getPayUUrl,
-  getPayUConfig,
-} from "./payu.server";
 import { payuCallbackSchema } from "../validations";
+
+// ─── Server-only helpers (dynamically imported inside handlers) ──
+
+async function getServerDeps() {
+  const [{ getSupabaseAdmin }, { getServerConfig }, { sendEmail }, payu] =
+    await Promise.all([
+      import("../supabase.server"),
+      import("../config.server"),
+      import("../email/send-email.server"),
+      import("./payu.server"),
+    ]);
+  return { getSupabaseAdmin, getServerConfig, sendEmail, ...payu };
+}
 
 // ─── Create PayU Order ──────────────────────────────────────
 
@@ -26,6 +30,8 @@ export const createPayUOrder = createServerFn({ method: "POST" })
     }),
   )
   .handler(async ({ data }) => {
+    const { getSupabaseAdmin, getServerConfig, getPayUConfig, generatePayUHash, getPayUUrl } =
+      await getServerDeps();
     const db = getSupabaseAdmin();
     const config = getServerConfig();
     const payu = getPayUConfig();
@@ -133,6 +139,13 @@ export const createPayUOrder = createServerFn({ method: "POST" })
 export const verifyPayUPayment = createServerFn({ method: "POST" })
   .validator(payuCallbackSchema)
   .handler(async ({ data: callbackData }) => {
+    const {
+      getSupabaseAdmin,
+      getServerConfig,
+      getPayUConfig,
+      verifyPayUReverseHash,
+      sendEmail,
+    } = await getServerDeps();
     const db = getSupabaseAdmin();
     const config = getServerConfig();
     const payu = getPayUConfig();
@@ -323,6 +336,7 @@ export const verifyPayUPayment = createServerFn({ method: "POST" })
 export const getBookingByRef = createServerFn({ method: "POST" })
   .validator(z.object({ publicRef: z.string().min(1) }))
   .handler(async ({ data }) => {
+    const { getSupabaseAdmin } = await getServerDeps();
     const db = getSupabaseAdmin();
 
     const { data: bookingData, error } = await db

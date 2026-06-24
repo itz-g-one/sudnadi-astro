@@ -1,6 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { getSupabaseAdmin } from "../supabase.server";
 
 /**
  * Check if the requesting user is an admin.
@@ -11,6 +10,7 @@ async function requireAdmin(authHeader?: string) {
   }
 
   const token = authHeader.replace("Bearer ", "");
+  const { getSupabaseAdmin } = await import("../supabase.server");
   const db = getSupabaseAdmin();
 
   const {
@@ -42,6 +42,7 @@ export const getAdminStats = createServerFn({ method: "POST" })
   .validator(z.object({ authToken: z.string() }))
   .handler(async ({ data }) => {
     await requireAdmin(`Bearer ${data.authToken}`);
+    const { getSupabaseAdmin } = await import("../supabase.server");
     const db = getSupabaseAdmin();
 
     const [
@@ -133,6 +134,7 @@ export const updateSiteSettings = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     const admin = await requireAdmin(`Bearer ${data.authToken}`);
+    const { getSupabaseAdmin } = await import("../supabase.server");
     const db = getSupabaseAdmin();
 
     for (const setting of data.settings) {
@@ -167,6 +169,7 @@ export const updateBookingStatus = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     const admin = await requireAdmin(`Bearer ${data.authToken}`);
+    const { getSupabaseAdmin } = await import("../supabase.server");
     const db = getSupabaseAdmin();
 
     const updateFields: { status: string; notes?: string } = { status: data.status };
@@ -204,6 +207,7 @@ export const updateContactStatus = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     const admin = await requireAdmin(`Bearer ${data.authToken}`);
+    const { getSupabaseAdmin } = await import("../supabase.server");
     const db = getSupabaseAdmin();
 
     const { error } = await db

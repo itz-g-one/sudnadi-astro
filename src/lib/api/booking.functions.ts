@@ -1,5 +1,4 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getSupabaseAdmin } from "../supabase.server";
 import { bookingFormSchema } from "../validations";
 
 /**
@@ -28,6 +27,7 @@ function generatePublicRef(): string {
 export const createBooking = createServerFn({ method: "POST" })
   .validator(bookingFormSchema)
   .handler(async ({ data }) => {
+    const { getSupabaseAdmin } = await import("../supabase.server");
     const db = getSupabaseAdmin();
 
     // 1. Look up service
