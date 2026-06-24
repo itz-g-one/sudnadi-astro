@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import type {} from "@tanstack/react-start";
+const createServerFn = ({method}) => ({ inputValidator: () => ({ handler: (fn) => fn }) });
 import { blogPosts } from "@/data/blogPosts";
 import { services } from "@/data/services";
 

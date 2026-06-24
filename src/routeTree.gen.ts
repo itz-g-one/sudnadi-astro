@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as OrderSuccessRouteImport } from './routes/order-success'
+import { Route as OrderFailureRouteImport } from './routes/order-failure'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as BlogRouteImport } from './routes/blog'
@@ -19,6 +20,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
+import { Route as ApiPayuCallbackRouteImport } from './routes/api/payu-callback'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -33,6 +35,11 @@ const ServicesRoute = ServicesRouteImport.update({
 const OrderSuccessRoute = OrderSuccessRouteImport.update({
   id: '/order-success',
   path: '/order-success',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrderFailureRoute = OrderFailureRouteImport.update({
+  id: '/order-failure',
+  path: '/order-failure',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -70,6 +77,11 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => BlogRoute,
 } as any)
+const ApiPayuCallbackRoute = ApiPayuCallbackRouteImport.update({
+  id: '/api/payu-callback',
+  path: '/api/payu-callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -77,9 +89,11 @@ export interface FileRoutesByFullPath {
   '/blog': typeof BlogRouteWithChildren
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
+  '/order-failure': typeof OrderFailureRoute
   '/order-success': typeof OrderSuccessRoute
   '/services': typeof ServicesRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/payu-callback': typeof ApiPayuCallbackRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/services/$slug': typeof ServicesSlugRoute
 }
@@ -89,9 +103,11 @@ export interface FileRoutesByTo {
   '/blog': typeof BlogRouteWithChildren
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
+  '/order-failure': typeof OrderFailureRoute
   '/order-success': typeof OrderSuccessRoute
   '/services': typeof ServicesRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/payu-callback': typeof ApiPayuCallbackRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/services/$slug': typeof ServicesSlugRoute
 }
@@ -102,9 +118,11 @@ export interface FileRoutesById {
   '/blog': typeof BlogRouteWithChildren
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
+  '/order-failure': typeof OrderFailureRoute
   '/order-success': typeof OrderSuccessRoute
   '/services': typeof ServicesRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/payu-callback': typeof ApiPayuCallbackRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/services/$slug': typeof ServicesSlugRoute
 }
@@ -116,9 +134,11 @@ export interface FileRouteTypes {
     | '/blog'
     | '/checkout'
     | '/contact'
+    | '/order-failure'
     | '/order-success'
     | '/services'
     | '/sitemap.xml'
+    | '/api/payu-callback'
     | '/blog/$slug'
     | '/services/$slug'
   fileRoutesByTo: FileRoutesByTo
@@ -128,9 +148,11 @@ export interface FileRouteTypes {
     | '/blog'
     | '/checkout'
     | '/contact'
+    | '/order-failure'
     | '/order-success'
     | '/services'
     | '/sitemap.xml'
+    | '/api/payu-callback'
     | '/blog/$slug'
     | '/services/$slug'
   id:
@@ -140,9 +162,11 @@ export interface FileRouteTypes {
     | '/blog'
     | '/checkout'
     | '/contact'
+    | '/order-failure'
     | '/order-success'
     | '/services'
     | '/sitemap.xml'
+    | '/api/payu-callback'
     | '/blog/$slug'
     | '/services/$slug'
   fileRoutesById: FileRoutesById
@@ -153,9 +177,11 @@ export interface RootRouteChildren {
   BlogRoute: typeof BlogRouteWithChildren
   CheckoutRoute: typeof CheckoutRoute
   ContactRoute: typeof ContactRoute
+  OrderFailureRoute: typeof OrderFailureRoute
   OrderSuccessRoute: typeof OrderSuccessRoute
   ServicesRoute: typeof ServicesRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ApiPayuCallbackRoute: typeof ApiPayuCallbackRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -179,6 +205,13 @@ declare module '@tanstack/react-router' {
       path: '/order-success'
       fullPath: '/order-success'
       preLoaderRoute: typeof OrderSuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/order-failure': {
+      id: '/order-failure'
+      path: '/order-failure'
+      fullPath: '/order-failure'
+      preLoaderRoute: typeof OrderFailureRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -230,6 +263,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof BlogRoute
     }
+    '/api/payu-callback': {
+      id: '/api/payu-callback'
+      path: '/api/payu-callback'
+      fullPath: '/api/payu-callback'
+      preLoaderRoute: typeof ApiPayuCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -261,9 +301,11 @@ const rootRouteChildren: RootRouteChildren = {
   BlogRoute: BlogRouteWithChildren,
   CheckoutRoute: CheckoutRoute,
   ContactRoute: ContactRoute,
+  OrderFailureRoute: OrderFailureRoute,
   OrderSuccessRoute: OrderSuccessRoute,
   ServicesRoute: ServicesRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ApiPayuCallbackRoute: ApiPayuCallbackRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

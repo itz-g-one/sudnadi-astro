@@ -4,6 +4,8 @@ import { useForm } from "react-hook-form";
 import { SiteShell } from "@/components/SiteShell";
 import { ConstellationBg, SectionEyebrow } from "@/components/Ornaments";
 import { Phone, Mail, MessageCircle, MapPin, Check, Send, ChevronDown, Clock } from "lucide-react";
+import { submitContactMessage } from "@/lib/api/contact.functions";
+import type { ContactFormData } from "@/lib/validations";
 
 const quickReplies = [
   { label: "Which reading is right for me?", msg: "Hi Sudhansu ji, I'm not sure which reading fits my situation. Can you help me decide?" },
@@ -35,10 +37,11 @@ export const Route = createFileRoute("/contact")({
   component: ContactPage,
 });
 
-type FormValues = { name: string; email: string; phone: string; topic: string; message: string };
+type FormValues = ContactFormData;
 
 function ContactPage() {
   const [sent, setSent] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
@@ -47,11 +50,17 @@ function ContactPage() {
   } = useForm<FormValues>({ mode: "onBlur" });
 
   const onSubmit = handleSubmit(async (data) => {
-    // No backend wired yet — simulate send.
-    await new Promise((r) => setTimeout(r, 600));
-    console.log("Contact submission:", data);
-    setSent(true);
-    reset();
+    setSubmitError(null);
+    try {
+      await submitContactMessage({ data });
+      setSent(true);
+      reset();
+    } catch (err) {
+      console.error("Contact submission failed:", err);
+      setSubmitError(
+        err instanceof Error ? err.message : "Something went wrong. Please try again.",
+      );
+    }
   });
 
   return (
@@ -119,6 +128,11 @@ function ContactPage() {
               </div>
             ) : (
               <form onSubmit={onSubmit} className="space-y-5" noValidate>
+                {submitError && (
+                  <div className="bg-red-50 border border-red-200 rounded-md p-4 text-sm text-red-700" role="alert">
+                    {submitError}
+                  </div>
+                )}
                 <h2 className="font-display text-[26px] text-indigo-deep">Send a message</h2>
                 <Field label="Your name" error={errors.name?.message}>
                   <input

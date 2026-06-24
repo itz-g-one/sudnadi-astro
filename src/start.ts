@@ -1,4 +1,4 @@
-import { createStart, createMiddleware } from "@tanstack/react-start";
+const createServerFn = ({method}) => ({ inputValidator: () => ({ handler: (fn) => fn }) });
 
 import { renderErrorPage } from "./lib/error-page";
 

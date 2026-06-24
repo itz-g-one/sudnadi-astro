@@ -4,7 +4,7 @@ import process from "node:process";
 // this file into the client — values here never reach the browser.
 //
 // On Cloudflare Workers, env binds at REQUEST time. Module-scope reads
-// (e.g. `const x = process.env.X`) resolve to undefined — always read
+// (e.g. `const x = import.meta.env.X`) resolve to undefined — always read
 // process.env INSIDE a function or handler.
 //
 // When to use which env-access pattern:
@@ -18,9 +18,23 @@ import process from "node:process";
 
 export function getServerConfig() {
   return {
-    nodeEnv: process.env.NODE_ENV,
-    // Add server-only values here, e.g.:
-    //   databaseUrl: process.env.DATABASE_URL,
-    //   stripeSecretKey: process.env.STRIPE_SECRET_KEY,
+    nodeEnv: import.meta.env.NODE_ENV,
+
+    // Supabase
+    supabaseUrl: import.meta.env.VITE_SUPABASE_URL ?? "",
+    supabaseServiceRoleKey: import.meta.env.SUPABASE_SERVICE_ROLE_KEY ?? "",
+
+    // PayU Payment Gateway
+    payuMerchantKey: import.meta.env.PAYU_MERCHANT_KEY ?? "",
+    payuSalt: import.meta.env.PAYU_SALT ?? "",
+    payuMode: (import.meta.env.PAYU_MODE ?? "test") as "test" | "live",
+
+    // Email (Resend)
+    resendApiKey: import.meta.env.RESEND_API_KEY ?? "",
+
+    // App
+    appUrl: import.meta.env.APP_URL ?? "http://localhost:3000",
+    adminEmail: import.meta.env.ADMIN_EMAIL ?? "",
+    supportEmail: import.meta.env.SUPPORT_EMAIL ?? "",
   };
 }

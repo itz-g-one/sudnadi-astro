@@ -214,6 +214,25 @@ function ServiceDetail() {
           </button>
         </div>
       </section>
+
+      {/* Sticky mobile booking bar — Swiggy/Zomato style */}
+      <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-border-light shadow-[0_-4px_20px_rgba(19,19,58,0.08)] px-4 py-3 flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-[11px] uppercase tracking-widest text-text-muted font-mono leading-tight">
+            {service.name}
+          </p>
+          <p className="font-display text-xl text-gold font-semibold leading-none mt-0.5">
+            ₹{service.price}
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={book}
+          className="flex-1 max-w-[200px] inline-flex items-center justify-center gap-2 bg-saffron text-white h-12 rounded-full font-semibold text-[15px] hover:bg-saffron-hover transition-all active:scale-95"
+        >
+          Book now <ArrowRight size={16} aria-hidden />
+        </button>
+      </div>
     </SiteShell>
   );
 }

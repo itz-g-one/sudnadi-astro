@@ -15,10 +15,19 @@ dist-ssr
 .tanstack/**
 .nitro
 *.local
+.env
+.env.local
+.env.production
 
 # Wrangler / Cloudflare
 .wrangler/
 .dev.vars
+
+# Archives
+*.zip
+
+# Lock files (using bun.lock)
+package-lock.json
 
 # Editor directories and files
 .vscode/*

@@ -1,10 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
 import { SiteShell } from "@/components/SiteShell";
 import { services } from "@/data/services";
-import { Check, MessageCircle } from "lucide-react";
+import { Check, MessageCircle, Loader2 } from "lucide-react";
 import { z } from "zod";
+import { getBookingByRef } from "@/lib/api/payment.functions";
 
 const search = z.object({
+  ref: z.string().optional(),
+  // Legacy support for old query params
   id: z.string().optional(),
   service: z.string().optional(),
   name: z.string().optional(),
@@ -18,8 +22,72 @@ export const Route = createFileRoute("/order-success")({
 });
 
 function OrderSuccess() {
-  const { id, service: slug, name, email } = Route.useSearch();
+  const { ref, id, service: slug, name, email } = Route.useSearch();
+
+  const [booking, setBooking] = useState<{
+    publicRef: string;
+    customerName: string;
+    customerEmail: string;
+    amount: number;
+    status: string;
+    serviceName: string;
+    deliveryText: string;
+  } | null>(null);
+
+  const [order, setOrder] = useState<{
+    status: string;
+    transactionId: string | null;
+    mihpayid: string | null;
+  } | null>(null);
+
+  const [loading, setLoading] = useState(!!ref);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch booking data from Supabase if ref is available
+  useEffect(() => {
+    if (!ref) return;
+
+    async function fetchBooking() {
+      try {
+        const result = await getBookingByRef({ data: { publicRef: ref! } });
+        if (result.success) {
+          setBooking(result.booking);
+          setOrder(result.order ?? null);
+        } else {
+          setError("Booking not found.");
+        }
+      } catch (err) {
+        console.error("Failed to fetch booking:", err);
+        setError("Could not load booking details.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchBooking();
+  }, [ref]);
+
+  // Fallback to legacy query params
   const service = services.find((s) => s.slug === slug);
+  const displayName = booking?.customerName ?? name ?? "";
+  const displayEmail = booking?.customerEmail ?? email ?? "";
+  const displayRef = booking?.publicRef ?? ref ?? id ?? "—";
+  const displayService = booking?.serviceName ?? service?.name ?? "";
+  const displayAmount = booking ? `₹${booking.amount}` : service ? `₹${service.price}` : "";
+  const displayDelivery = booking?.deliveryText ?? service?.delivery ?? "3–5 business days";
+
+  if (loading) {
+    return (
+      <SiteShell>
+        <section className="py-24">
+          <div className="mx-auto max-w-2xl px-5 text-center">
+            <Loader2 size={40} className="mx-auto text-saffron animate-spin" />
+            <p className="mt-4 text-text-body">Loading your booking details…</p>
+          </div>
+        </section>
+      </SiteShell>
+    );
+  }
 
   return (
     <SiteShell>
@@ -32,21 +100,40 @@ function OrderSuccess() {
             Booking confirmed.
           </h1>
           <p className="mt-3 text-text-body">
-            Thank you{name ? `, ${name}` : ""}. Sudhansu has received your request and will begin preparing your reading.
+            Thank you{displayName ? `, ${displayName}` : ""}. Sudhansu has received your request and will begin preparing your reading.
           </p>
+
+          {error && (
+            <div className="mt-4 bg-amber-50 border border-amber-200 rounded-md p-3 text-sm text-amber-700">
+              {error} Showing basic confirmation details.
+            </div>
+          )}
 
           <div className="mt-10 bg-white border border-border-light rounded-lg p-7 text-left shadow-warm">
             <div className="flex items-center justify-between pb-4 border-b border-border-light">
-              <span className="text-xs uppercase tracking-widest text-text-muted font-mono">Order</span>
-              <span className="font-mono text-sm text-indigo-deep">#{id ?? "—"}</span>
+              <span className="text-xs uppercase tracking-widest text-text-muted font-mono">Booking reference</span>
+              <span className="font-mono text-sm text-indigo-deep font-semibold">{displayRef}</span>
             </div>
             <dl className="mt-4 space-y-3 text-sm">
-              {service && (
-                <Row label="Reading" value={service.name} />
+              {displayService && <Row label="Reading" value={displayService} />}
+              {displayAmount && <Row label="Amount" value={displayAmount} />}
+              <Row label="Delivery" value={displayDelivery} />
+              {displayEmail && <Row label="Delivered to" value={displayEmail} />}
+              {order?.transactionId && <Row label="Transaction ID" value={order.transactionId} />}
+              {booking?.status && (
+                <Row
+                  label="Status"
+                  value={
+                    booking.status === "paid"
+                      ? "✅ Payment received"
+                      : booking.status === "processing"
+                        ? "🔄 Processing"
+                        : booking.status === "completed"
+                          ? "✅ Completed"
+                          : booking.status
+                  }
+                />
               )}
-              {service && <Row label="Amount" value={`₹${service.price}`} />}
-              {service && <Row label="Delivery" value={service.delivery} />}
-              {email && <Row label="Delivered to" value={email} />}
             </dl>
           </div>
 
@@ -57,7 +144,7 @@ function OrderSuccess() {
             {[
               { n: 1, title: "Sudhansu reviews your details", text: "He'll cross-check your birth time and place to ensure accuracy." },
               { n: 2, title: "Your reading is prepared by hand", text: "Drawn from your specific chart — no templates." },
-              { n: 3, title: "PDF arrives in your inbox", text: `Within ${service?.delivery ?? "1–5 business days"}.` },
+              { n: 3, title: "PDF arrives in your inbox", text: `Within ${displayDelivery}.` },
             ].map((s) => (
               <li key={s.n} className="flex gap-4 bg-cream-warm/60 border border-border-warm rounded-md p-4">
                 <span className="w-9 h-9 rounded-full bg-saffron text-white inline-flex items-center justify-center font-display font-semibold shrink-0">

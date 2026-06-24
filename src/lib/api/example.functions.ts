@@ -1,4 +1,4 @@
-import { createServerFn } from "@tanstack/react-start";
+const createServerFn = ({method}) => ({ inputValidator: () => ({ handler: (fn) => fn }) });
 import { z } from "zod";
 
 import { getServerConfig } from "../config.server";

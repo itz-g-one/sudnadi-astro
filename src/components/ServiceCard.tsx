@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Clock, ShoppingCart } from "lucide-react";
 import { categoryColors, categoryLabel, type Service } from "@/data/services";
 
 export function ServiceCard({ service, delay = 0 }: { service: Service; delay?: number }) {
@@ -45,17 +45,35 @@ export function ServiceCard({ service, delay = 0 }: { service: Service; delay?: 
         <p className="mt-3 text-[14.5px] text-text-body leading-relaxed line-clamp-3">
           {service.desc}
         </p>
-        <div className="mt-5 pt-5 border-t border-border-light flex items-center justify-between">
-          <span className="font-display text-2xl text-gold font-semibold">
-            ₹{service.price}
-          </span>
-          <Link
-            to="/services/$slug"
-            params={{ slug: service.slug }}
-            className="inline-flex items-center gap-1 text-saffron font-semibold text-[13.5px] hover:gap-2 transition-all"
-          >
-            View details <ArrowRight size={14} aria-hidden />
-          </Link>
+
+        {/* Price + delivery info */}
+        <div className="mt-auto pt-5">
+          <div className="flex items-center justify-between pb-4 border-b border-border-light">
+            <span className="font-display text-2xl text-gold font-semibold">
+              ₹{service.price}
+            </span>
+            <span className="flex items-center gap-1 text-[12px] text-text-muted">
+              <Clock size={12} aria-hidden /> {service.delivery}
+            </span>
+          </div>
+
+          {/* Two action buttons — like Swiggy/Zomato cards */}
+          <div className="mt-4 flex gap-2">
+            <Link
+              to="/checkout"
+              search={{ service: service.slug }}
+              className="flex-1 inline-flex items-center justify-center gap-1.5 bg-saffron text-white h-11 rounded-full font-semibold text-[13.5px] hover:bg-saffron-hover transition-all hover:-translate-y-0.5"
+            >
+              <ShoppingCart size={14} aria-hidden /> Book now
+            </Link>
+            <Link
+              to="/services/$slug"
+              params={{ slug: service.slug }}
+              className="inline-flex items-center justify-center gap-1 border-2 border-border-light text-text-body h-11 px-4 rounded-full text-[13px] font-medium hover:border-saffron hover:text-saffron transition-colors"
+            >
+              Details <ArrowRight size={13} aria-hidden />
+            </Link>
+          </div>
         </div>
       </div>
     </article>

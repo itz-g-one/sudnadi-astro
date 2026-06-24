@@ -1,11 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
-import { useMemo } from "react";
+import { useMemo, useState, useRef, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { services } from "@/data/services";
-import { ShieldCheck, Clock, ArrowRight } from "lucide-react";
+import { ShieldCheck, Clock, ArrowRight, Loader2 } from "lucide-react";
 import { z } from "zod";
+import { createBooking } from "@/lib/api/booking.functions";
+import { createPayUOrder } from "@/lib/api/payment.functions";
 
 const searchSchema = z.object({ service: z.string().optional() });
 
@@ -34,6 +36,14 @@ function CheckoutPage() {
     [presetSlug],
   );
 
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const [checkoutStep, setCheckoutStep] = useState<"idle" | "booking" | "payment" | "redirecting">("idle");
+  const payuFormRef = useRef<HTMLFormElement>(null);
+  const [payuData, setPayuData] = useState<{
+    payuUrl: string;
+    formFields: Record<string, string>;
+  } | null>(null);
+
   const {
     register,
     handleSubmit,
@@ -47,14 +57,54 @@ function CheckoutPage() {
   const currentSlug = watch("serviceSlug");
   const current = services.find((s) => s.slug === currentSlug) ?? services[0];
 
+  // Auto-submit PayU form when data is ready
+  useEffect(() => {
+    if (payuData && payuFormRef.current) {
+      setCheckoutStep("redirecting");
+      payuFormRef.current.submit();
+    }
+  }, [payuData]);
+
   const onSubmit = handleSubmit(async (data) => {
-    await new Promise((r) => setTimeout(r, 700));
-    const orderId = "AS" + Date.now().toString().slice(-7);
-    navigate({
-      to: "/order-success",
-      search: { id: orderId, service: data.serviceSlug, name: data.name, email: data.email },
-    });
+    setCheckoutError(null);
+
+    try {
+      // Step 1: Create booking
+      setCheckoutStep("booking");
+      const bookingResult = await createBooking({ data });
+
+      if (!bookingResult.success) {
+        throw new Error("Failed to create booking.");
+      }
+
+      // Step 2: Create PayU order
+      setCheckoutStep("payment");
+      const payuResult = await createPayUOrder({
+        data: {
+          bookingId: bookingResult.bookingId,
+          orderId: bookingResult.orderId,
+        },
+      });
+
+      if (!payuResult.success) {
+        throw new Error("Failed to initiate payment.");
+      }
+
+      // Step 3: Set PayU data — auto-submit will trigger via useEffect
+      setPayuData({
+        payuUrl: payuResult.payuUrl,
+        formFields: payuResult.formFields as unknown as Record<string, string>,
+      });
+    } catch (err) {
+      console.error("Checkout failed:", err);
+      setCheckoutError(
+        err instanceof Error ? err.message : "Something went wrong. Please try again.",
+      );
+      setCheckoutStep("idle");
+    }
   });
+
+  const isProcessing = checkoutStep !== "idle";
 
   const stepLabels = ["Reading", "You", "Birth details", "Confirm"];
 
@@ -90,7 +140,13 @@ function CheckoutPage() {
 
           <div className="mt-8 grid lg:grid-cols-[1.5fr_1fr] gap-8">
             <form onSubmit={onSubmit} className="bg-white border border-border-light rounded-lg p-6 md:p-8 shadow-warm space-y-8" noValidate>
-              <fieldset className="space-y-4">
+              {checkoutError && (
+                <div className="bg-red-50 border border-red-200 rounded-md p-4 text-sm text-red-700" role="alert">
+                  {checkoutError}
+                </div>
+              )}
+
+              <fieldset className="space-y-4" disabled={isProcessing}>
                 <legend className="font-display text-xl text-indigo-deep">1. Choose your reading</legend>
                 <div className="grid sm:grid-cols-2 gap-3">
                   {services.map((s) => {
@@ -113,7 +169,7 @@ function CheckoutPage() {
                 </div>
               </fieldset>
 
-              <fieldset className="space-y-4">
+              <fieldset className="space-y-4" disabled={isProcessing}>
                 <legend className="font-display text-xl text-indigo-deep">2. Your details</legend>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <Field label="Full name (as on documents)" error={errors.name?.message}>
@@ -128,7 +184,7 @@ function CheckoutPage() {
                 </div>
               </fieldset>
 
-              <fieldset className="space-y-4">
+              <fieldset className="space-y-4" disabled={isProcessing}>
                 <legend className="font-display text-xl text-indigo-deep">3. Birth details</legend>
                 <p className="text-[13px] text-text-muted -mt-1">
                   Tip: an exact birth time (from hospital records) gives the most accurate reading.
@@ -153,13 +209,22 @@ function CheckoutPage() {
                 <legend className="font-display text-xl text-indigo-deep">4. Confirm & pay</legend>
                 <button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isProcessing || isSubmitting}
                   className="w-full inline-flex items-center justify-center gap-2 bg-saffron text-white h-14 rounded-full font-semibold text-[16px] hover:bg-saffron-hover transition-colors disabled:opacity-60"
                 >
-                  {isSubmitting ? "Processing…" : `Confirm booking · ₹${current.price}`} <ArrowRight size={18} aria-hidden />
+                  {isProcessing ? (
+                    <>
+                      <Loader2 size={18} className="animate-spin" aria-hidden />
+                      {checkoutStep === "booking" && "Creating booking…"}
+                      {checkoutStep === "payment" && "Preparing payment…"}
+                      {checkoutStep === "redirecting" && "Redirecting to PayU…"}
+                    </>
+                  ) : (
+                    <>{`Confirm booking · ₹${current.price}`} <ArrowRight size={18} aria-hidden /></>
+                  )}
                 </button>
                 <p className="text-xs text-text-muted text-center">
-                  <ShieldCheck size={12} className="inline mr-1 text-saffron" aria-hidden /> Secure payment via Razorpay (coming soon — booking confirmed by email for now).
+                  <ShieldCheck size={12} className="inline mr-1 text-saffron" aria-hidden /> Secure payment via PayU. Your details are encrypted.
                 </p>
               </fieldset>
             </form>
@@ -199,12 +264,30 @@ function CheckoutPage() {
         <button
           type="button"
           onClick={() => document.querySelector<HTMLFormElement>("form")?.requestSubmit()}
-          disabled={isSubmitting}
+          disabled={isProcessing || isSubmitting}
           className="flex-1 max-w-[240px] inline-flex items-center justify-center gap-2 bg-saffron text-white h-12 rounded-full font-semibold text-[15px] hover:bg-saffron-hover transition-colors disabled:opacity-60"
         >
-          {isSubmitting ? "Processing…" : "Confirm booking"} <ArrowRight size={16} aria-hidden />
+          {isProcessing ? (
+            <><Loader2 size={16} className="animate-spin" aria-hidden /> Processing…</>
+          ) : (
+            <>Confirm booking <ArrowRight size={16} aria-hidden /></>
+          )}
         </button>
       </div>
+
+      {/* Hidden PayU redirect form */}
+      {payuData && (
+        <form
+          ref={payuFormRef}
+          method="POST"
+          action={payuData.payuUrl}
+          style={{ display: "none" }}
+        >
+          {Object.entries(payuData.formFields).map(([key, value]) => (
+            <input key={key} type="hidden" name={key} value={value} />
+          ))}
+        </form>
+      )}
 
       <Footer />
     </div>
