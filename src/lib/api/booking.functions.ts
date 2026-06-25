@@ -25,7 +25,7 @@ function generatePublicRef(): string {
  * 6. Returns booking + order data for payment initiation
  */
 export const createBooking = createServerFn({ method: "POST" })
-  .input(bookingFormSchema)
+  .validator(bookingFormSchema)
   .handler(async ({ data }) => {
     const { getSupabaseAdmin } = await import("../supabase.server");
     const db = getSupabaseAdmin();
