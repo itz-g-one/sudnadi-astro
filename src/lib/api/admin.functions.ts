@@ -39,7 +39,7 @@ async function requireAdmin(authHeader?: string) {
 // ─── Admin Dashboard Stats ─────────────────────────────────
 
 export const getAdminStats = createServerFn({ method: "POST" })
-  .validator(z.object({ authToken: z.string() }))
+  .input(z.object({ authToken: z.string() }))
   .handler(async ({ data }) => {
     await requireAdmin(`Bearer ${data.authToken}`);
     const { getSupabaseAdmin } = await import("../supabase.server");
@@ -126,7 +126,7 @@ export const getAdminStats = createServerFn({ method: "POST" })
 // ─── Update Site Settings ───────────────────────────────────
 
 export const updateSiteSettings = createServerFn({ method: "POST" })
-  .validator(
+  .input(
     z.object({
       authToken: z.string(),
       settings: z.array(z.object({ key: z.string(), value: z.unknown() })),
@@ -159,7 +159,7 @@ export const updateSiteSettings = createServerFn({ method: "POST" })
 // ─── Update Booking Status ──────────────────────────────────
 
 export const updateBookingStatus = createServerFn({ method: "POST" })
-  .validator(
+  .input(
     z.object({
       authToken: z.string(),
       bookingId: z.string().uuid(),
@@ -198,7 +198,7 @@ export const updateBookingStatus = createServerFn({ method: "POST" })
 // ─── Update Contact Message Status ──────────────────────────
 
 export const updateContactStatus = createServerFn({ method: "POST" })
-  .validator(
+  .input(
     z.object({
       authToken: z.string(),
       messageId: z.string().uuid(),

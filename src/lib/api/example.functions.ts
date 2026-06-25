@@ -10,7 +10,7 @@ import { z } from "zod";
 // Functions for server logic.
 
 export const getGreeting = createServerFn({ method: "POST" })
-  .validator(z.object({ name: z.string().min(1) }))
+  .input(z.object({ name: z.string().min(1) }))
   .handler(async ({ data }) => {
     const { getServerConfig } = await import("../config.server");
     const config = getServerConfig();

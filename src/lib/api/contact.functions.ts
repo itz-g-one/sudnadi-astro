@@ -12,7 +12,7 @@ import { contactFormSchema } from "../validations";
  * 5. Logs to audit_logs
  */
 export const submitContactMessage = createServerFn({ method: "POST" })
-  .validator(contactFormSchema)
+  .input(contactFormSchema)
   .handler(async ({ data }) => {
     const { getSupabaseAdmin } = await import("../supabase.server");
     const { sendEmail } = await import("../email/send-email.server");

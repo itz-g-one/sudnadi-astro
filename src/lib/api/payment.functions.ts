@@ -23,7 +23,7 @@ async function getServerDeps() {
 // ─── Create PayU Order ──────────────────────────────────────
 
 export const createPayUOrder = createServerFn({ method: "POST" })
-  .validator(
+  .input(
     z.object({
       bookingId: z.string().uuid(),
       orderId: z.string().uuid(),
@@ -137,7 +137,7 @@ export const createPayUOrder = createServerFn({ method: "POST" })
 // ─── Verify PayU Payment (Callback) ────────────────────────
 
 export const verifyPayUPayment = createServerFn({ method: "POST" })
-  .validator(payuCallbackSchema)
+  .input(payuCallbackSchema)
   .handler(async ({ data: callbackData }) => {
     const {
       getSupabaseAdmin,
@@ -334,7 +334,7 @@ export const verifyPayUPayment = createServerFn({ method: "POST" })
 // ─── Fetch Booking by Public Ref ────────────────────────────
 
 export const getBookingByRef = createServerFn({ method: "POST" })
-  .validator(z.object({ publicRef: z.string().min(1) }))
+  .input(z.object({ publicRef: z.string().min(1) }))
   .handler(async ({ data }) => {
     const { getSupabaseAdmin } = await getServerDeps();
     const db = getSupabaseAdmin();
