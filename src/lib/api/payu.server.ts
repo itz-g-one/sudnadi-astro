@@ -125,9 +125,9 @@ export function verifyPayUReverseHash(params: {
  * Get PayU config from environment.
  */
 export function getPayUConfig() {
-  const key = import.meta.env.PAYU_MERCHANT_KEY;
-  const salt = import.meta.env.PAYU_SALT;
-  const mode = (import.meta.env.PAYU_MODE ?? "test") as "test" | "live";
+  const key = process.env.PAYU_MERCHANT_KEY || import.meta.env.PAYU_MERCHANT_KEY;
+  const salt = process.env.PAYU_SALT || import.meta.env.PAYU_SALT;
+  const mode = (process.env.PAYU_MODE || import.meta.env.PAYU_MODE || "test") as "test" | "live";
 
   if (!key || !salt) {
     throw new Error(

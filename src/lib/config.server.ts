@@ -16,23 +16,23 @@
 
 export function getServerConfig() {
   return {
-    nodeEnv: import.meta.env.NODE_ENV,
+    nodeEnv: process.env.NODE_ENV || import.meta.env.NODE_ENV,
 
     // Supabase
-    supabaseUrl: import.meta.env.VITE_SUPABASE_URL ?? "",
-    supabaseServiceRoleKey: import.meta.env.SUPABASE_SERVICE_ROLE_KEY ?? "",
+    supabaseUrl: process.env.VITE_SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL || "",
+    supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY || import.meta.env.SUPABASE_SERVICE_ROLE_KEY || "",
 
     // PayU Payment Gateway
-    payuMerchantKey: import.meta.env.PAYU_MERCHANT_KEY ?? "",
-    payuSalt: import.meta.env.PAYU_SALT ?? "",
-    payuMode: (import.meta.env.PAYU_MODE ?? "test") as "test" | "live",
+    payuMerchantKey: process.env.PAYU_MERCHANT_KEY || import.meta.env.PAYU_MERCHANT_KEY || "",
+    payuSalt: process.env.PAYU_SALT || import.meta.env.PAYU_SALT || "",
+    payuMode: (process.env.PAYU_MODE || import.meta.env.PAYU_MODE || "test") as "test" | "live",
 
     // Email (Resend)
-    resendApiKey: import.meta.env.RESEND_API_KEY ?? "",
+    resendApiKey: process.env.RESEND_API_KEY || import.meta.env.RESEND_API_KEY || "",
 
     // App
-    appUrl: import.meta.env.APP_URL ?? "http://localhost:3000",
-    adminEmail: import.meta.env.ADMIN_EMAIL ?? "",
-    supportEmail: import.meta.env.SUPPORT_EMAIL ?? "",
+    appUrl: process.env.APP_URL || import.meta.env.APP_URL || "http://localhost:3000",
+    adminEmail: process.env.ADMIN_EMAIL || import.meta.env.ADMIN_EMAIL || "",
+    supportEmail: process.env.SUPPORT_EMAIL || import.meta.env.SUPPORT_EMAIL || "",
   };
 }

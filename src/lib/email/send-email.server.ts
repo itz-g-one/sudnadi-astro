@@ -21,7 +21,7 @@ interface SendEmailResult {
  * (logs a warning instead of crashing).
  */
 export async function sendEmail(opts: SendEmailOptions): Promise<SendEmailResult> {
-  const apiKey = import.meta.env.RESEND_API_KEY;
+  const apiKey = process.env.RESEND_API_KEY || import.meta.env.RESEND_API_KEY;
 
   if (!apiKey) {
     console.warn("[email] RESEND_API_KEY not set — email not sent:", opts.subject);
