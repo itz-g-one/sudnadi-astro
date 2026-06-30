@@ -27,8 +27,8 @@ dist-ssr
 # Archives
 *.zip
 
-# Lock files (using bun.lock)
-package-lock.json
+# Lock files (using npm)
+bun.lock
 
 # Editor directories and files
 .vscode/*
